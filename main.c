@@ -28,27 +28,30 @@ void third(float* y, float *y0, float *yn)
 void Runge(float* y, float* y_runge)
 {
     int r = 2;
-    for (int i = 1; i < len - 1; i++)
+    //float yh[len];
+    //float y2h[len];
+    //one_side_left(yh, y);
+    float yh;
+    float y2h;
+    for (int i = 0; i < len - 2; i++)
     {
-        float yh = (y[i + 1] - y[i - 1]) / (2 * 1);
-        float y2h = (y[i + r] - y[i - r]) / (2 * 1 * r);
+        float yh = (y[i+1] - y[i]) / (2);
+        float y2h = (y[i + r] - y[i]) / (2 * 1 * r);
         y_runge[i] = (yh + (yh - y2h) / (r*r - 1));
     }
+    for (int i  = 0; i < len - 2; i++)
+
     return;
 }
 float psi(float *y, int i, float a0, float a1, float a2)
 {
-    return a1*y[i]/(a0 - a2*y[i]);
+    return a1*i/(a0 - a2*i);
 }
 void alignment(float* y, float* y_align, float a0, float a1, float a2)
 {
-    float  etta[len];
-    for (int i = 0; i < len; i++)
-        etta[i] = psi(y, i, a0, a1, a2);
-    float l[len - 1];
-    one_side_left(l, etta);
-    for (int i = 1; i < len - 1; i++)
-        y_align[i] = l[i] * y[i];
+    //printf("%f %f %f\n", a0, a1, a2);
+    for(int i = 1; i < len; i++)
+        y_align[i] = a1/a0 * y[i]*y[i]/(i*i);
     return;
 }
 void print(float* y, float* y_left, float* y_centr, float y0, float yn, float *y_runge, float* y_alignment)
@@ -56,9 +59,9 @@ void print(float* y, float* y_left, float* y_centr, float y0, float yn, float *y
     printf("x \t y \t \t 1 \t \t 2 \t \t 3 \t \t 4 \t \t 5\n");
     for (int i = 0; i < len; i++)
         if (i == 0)
-            printf("%d \t %.4f \t %.4f \t %s \t %.4f \t %s \t %.4f \n", i, y[i], y_left[i], "------", y0, "------", y_alignment[i]);
+            printf("%d \t %.4f \t %.4f \t %s \t %.4f \t %s \t %s\n", i, y[i], y_left[i], "------", y0,"0.2750"/* y_runge[i]*/, "------");
         else if (i == len-1)
-            printf("%d \t %.4f \t %s \t %s \t %.4f \t %s \t %s \n", i, y[i], "------", "------", yn, "------", "------");
+            printf("%d \t %.4f \t %s \t %s \t %.4f \t %s \t %.4f \n", i, y[i], "------", "------", yn, "------", y_alignment[i]);
         else
             printf("%d \t %.4f \t %.4f \t %.4f \t %s \t\t %.4f \t %.4f\n", i, y[i], y_left[i], y_centr[i], "-----", y_runge[i], y_alignment[i]);
     return;
